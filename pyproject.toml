@@ -1,0 +1,42 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "isvirtual"
+version = "1.0.0"
+description = "Detect if your script is running inside a virtual environment"
+readme = "README.md"
+authors = [{ name = "Alex Mili" }]
+license = { file = "LICENSE" }
+requires-python = ">=3.3"
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.3",
+    "Programming Language :: Python :: 3.4",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+keywords = ["virtual", "env", "venv", "virtualenv", "pyenv", "environment"]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/AlexMili/isVirtual"
+Issues = "https://github.com/AlexMili/isVirtual/issues"
+Repository = "https://github.com/AlexMili/isVirtual"
+Documentation = "https://github.com/AlexMili/isVirtual"
+
+[project.scripts]
+isvirtual = "main:is_virtual_env_cli"
+
+[tool.hatch.build.targets.wheel]
+packages = ["."]
