@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "isvirtual"
-version = "1.0.0"
 description = "Detect if your script is running inside a virtual environment"
+dynamic = ["version"]
 readme = "README.md"
 authors = [{ name = "Alex Mili" }]
 license = { file = "LICENSE" }
@@ -39,4 +39,8 @@ Documentation = "https://github.com/AlexMili/isVirtual"
 isvirtual = "main:is_virtual_env_cli"
 
 [tool.hatch.build.targets.wheel]
-packages = ["."]
+packages = ["./src"]
+
+[tool.hatch.version]
+path = "src/VERSION.md"
+pattern = "(?P<version>.*)"

@@ -2,13 +2,8 @@ import configparser
 import os.path as osp
 import sys
 
-version_path = osp.join(osp.dirname(__file__), "VERSION.md")
-
-if osp.exists(version_path):
-    with open(version_path, "r") as f:
-        __version__ = f.readline()
-
 config = None
+
 
 def is_virtual_env() -> str:
     # The check for sys.real_prefix covers virtualenv, the equality of
