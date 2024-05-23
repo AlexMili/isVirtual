@@ -14,7 +14,10 @@ pip install isvirtual
 
 # Usage
 
-Within a python script:
+This lib can be used within a python script or as a command line.
+
+## Python
+Simple check:
 ```python
 from isvirtual import is_virtual_env
 
@@ -25,7 +28,31 @@ if __name__ == "__main__":
         print("You are not in a virtual env")
 ```
 
-CLI mode:
+You can also check if you are specifically in a `venv` or `virtualenv` environment:
+```python
+from isvirtual import is_venv, is_virtualenv
+
+if __name__ == "__main__":
+    if is_venv() is True:
+        print("You are in a venv")
+    elif is_virtualenv() is True:
+        print("You are in a virtualenv")
+    else:
+        print("You are not in a virtual env")
+```
+
+You can also get the info from the env coming from `pyvenv.cfg`. The `sys.prefix` data is added to the original config file:
+```python
+from isvirtual import is_virtual_env, pyvenv_cfg
+
+if __name__ == "__main__":
+    if is_virtual_env() is True:
+        data = pyvenv_cfg()
+        print(data["home"])
+```
+
+
+## CLI
 ```console
 $ isvirtual
 Yes
