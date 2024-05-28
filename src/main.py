@@ -1,11 +1,17 @@
 import configparser
-import os.path as osp
+import glob
+import json
+import os
 import sys
 
 config = None
 
 
-def is_virtual_env() -> str:
+def is_virtual() -> bool:
+    return is_virtual_env() or is_conda()
+
+
+def is_virtual_env() -> bool:
     # The check for sys.real_prefix covers virtualenv, the equality of
     # non-empty sys.base_prefix with sys.prefix covers venv.
     # note: Python versions before 3.3 don't have sys.base_prefix
@@ -15,17 +21,38 @@ def is_virtual_env() -> str:
     )
 
 
-def pyvenv_cfg() -> dict:
+def get_config() -> dict:
+    dconf = {}
     if is_virtual_env() is False:
-        return {}
+        dconf = _conda_cfg()
+    else:
+        prefix = _get_prefix()
+        _read_config(os.path.join(prefix, "pyvenv.cfg"))
 
-    prefix = _get_prefix()
-    _read_config(osp.join(prefix, "pyvenv.cfg"))
-
-    dconf = dict(config["root"])
-    dconf["prefix"] = prefix
+        dconf = dict(config["root"])
+        dconf["prefix"] = prefix
 
     return dconf
+
+
+def _conda_cfg() -> dict:
+    data = {}
+
+    data["home"] = os.path.join(os.environ["CONDA_PREFIX"], "bin")
+    data["prefix"] = _get_prefix()
+    data["include-system-site-packages"] = False
+    data["prompt"] = os.environ["CONDA_DEFAULT_ENV"]
+
+    path = os.path.join(os.environ["CONDA_PREFIX"], "conda-meta", "python*")
+
+    files = glob.glob(path)
+    if len(files) > 0:
+        with open(files[0], "r") as fp:
+            conda_info = json.load(fp)
+
+    data["version"] = conda_info["version"]
+
+    return data
 
 
 def is_venv() -> bool:
@@ -33,12 +60,12 @@ def is_venv() -> bool:
         return False
 
     prefix = _get_prefix()
-    _read_config(osp.join(prefix, "pyvenv.cfg"))
+    _read_config(os.path.join(prefix, "pyvenv.cfg"))
 
-    if "virtualenv" in config["root"]:
-        return False
-    else:
+    if is_virtualenv() is False:
         return True
+    else:
+        return False
 
 
 def is_virtualenv() -> bool:
@@ -46,12 +73,28 @@ def is_virtualenv() -> bool:
         return False
 
     prefix = _get_prefix()
-    _read_config(osp.join(prefix, "pyvenv.cfg"))
+    _read_config(os.path.join(prefix, "pyvenv.cfg"))
 
     if "virtualenv" in config["root"]:
         return True
     else:
         return False
+
+
+def is_conda() -> bool:
+    is_conda = False
+    try:
+        os.environ["CONDA_DEFAULT_ENV"]
+        is_conda = True
+    except Exception:
+        pass
+    try:
+        os.environ["CONDA_PREFIX"]
+        is_conda = True
+    except Exception:
+        pass
+
+    return is_conda
 
 
 def _get_prefix() -> str:
@@ -68,8 +111,8 @@ def _read_config(path: str) -> None:
         config = conf
 
 
-def is_virtual_env_cli() -> None:
-    if is_virtual_env() is True:
+def is_virtual_cli() -> None:
+    if is_virtual():
         print("Yes")
     else:
         print("No")

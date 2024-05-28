@@ -36,7 +36,7 @@ Repository = "https://github.com/AlexMili/isVirtual"
 Documentation = "https://github.com/AlexMili/isVirtual"
 
 [project.scripts]
-isvirtual = "main:is_virtual_env_cli"
+isvirtual = "main:is_virtual_cli"
 
 [tool.hatch.build.targets.wheel]
 packages = ["./src"]

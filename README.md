@@ -22,13 +22,13 @@ Simple check:
 from isvirtual import is_virtual_env
 
 if __name__ == "__main__":
-    if is_virtual_env() is True:
-        print("You are within a virtual environment")
+    if is_virtual() is True:
+        print("You are within a virtual environment which can either be venv, virtualenv or conda.")
     else:
         print("You are not in a virtual env")
 ```
 
-You can also check if you are specifically in a `venv` or `virtualenv` environment:
+You can also check if you are specifically in a `venv`, `virtualenv` or `conda` environment:
 ```python
 from isvirtual import is_venv, is_virtualenv
 
@@ -37,20 +37,30 @@ if __name__ == "__main__":
         print("You are in a venv")
     elif is_virtualenv() is True:
         print("You are in a virtualenv")
+    elif is_conda() is True:
+        print("You are in a conda env")
     else:
-        print("You are not in a virtual env")
+        print("You are not in a any type of virtual env")
 ```
 
-You can also get the info from the env coming from `pyvenv.cfg`. The `sys.prefix` data is added to the original config file:
+You can also get the info from the env coming from `pyvenv.cfg` or load equivalent data from `conda` config. The `sys.prefix` data is added to the original config file under the key `prefix`:
 ```python
-from isvirtual import is_virtual_env, pyvenv_cfg
+from isvirtual import is_virtual_env, get_config
 
 if __name__ == "__main__":
-    if is_virtual_env() is True:
-        data = pyvenv_cfg()
-        print(data["home"])
+    data = get_config()
+    print(data["home"])
+```
+Result:
+```console
+home = /path/to/venv/python/bin
+include-system-site-packages = false
+version = 3.10.14
+prefix = /path/to/venv/dir
+prompt = nameOfYourProject
 ```
 
+Note that virtual environment created with `virtualenv` have more keys and the key `prompt` is not present by default in `venv` created environments.
 
 ## CLI
 ```console
