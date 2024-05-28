@@ -19,7 +19,7 @@ This lib can be used within a python script or as a command line.
 ## Python
 Simple check:
 ```python
-from isvirtual import is_virtual_env
+from isvirtual import is_virtual
 
 if __name__ == "__main__":
     if is_virtual() is True:
@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
 You can also get the info from the env coming from `pyvenv.cfg` or load equivalent data from `conda` config. The `sys.prefix` data is added to the original config file under the key `prefix`:
 ```python
-from isvirtual import is_virtual_env, get_config
+from isvirtual import is_virtual, get_config
 
 if __name__ == "__main__":
     data = get_config()
