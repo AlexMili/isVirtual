@@ -30,7 +30,7 @@ if __name__ == "__main__":
 
 You can also check if you are specifically in a `venv`, `virtualenv` or `conda` environment:
 ```python
-from isvirtual import is_venv, is_virtualenv
+from isvirtual import is_venv, is_virtualenv, is_conda
 
 if __name__ == "__main__":
     if is_venv() is True:
@@ -45,7 +45,7 @@ if __name__ == "__main__":
 
 You can also get the info from the env coming from `pyvenv.cfg` or load equivalent data from `conda` config. The `sys.prefix` data is added to the original config file under the key `prefix`:
 ```python
-from isvirtual import is_virtual, get_config
+from isvirtual import get_config
 
 if __name__ == "__main__":
     data = get_config()
