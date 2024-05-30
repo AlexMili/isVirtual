@@ -1,5 +1,7 @@
 import os.path as osp
 
+from isvirtual.main import *
+
 version_path = osp.join(osp.dirname(__file__), "VERSION.md")
 
 if osp.exists(version_path):

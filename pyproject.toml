@@ -36,13 +36,13 @@ Repository = "https://github.com/AlexMili/isVirtual"
 Documentation = "https://github.com/AlexMili/isVirtual"
 
 [project.scripts]
-isvirtual = "main:is_virtual_cli"
+isvirtual = "isvirtual.cli:app"
 
 [tool.hatch.build.targets.wheel]
-packages = ["./src"]
+packages = ["./isvirtual"]
 
 [tool.hatch.version]
-path = "src/VERSION.md"
+path = "isvirtual/VERSION.md"
 pattern = "(?P<version>.*)"
 
 [tool.ruff.lint.isort]

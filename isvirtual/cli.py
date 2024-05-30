@@ -1,7 +1,7 @@
 import typer
 from typing_extensions import Annotated
 
-from . import check_dir, is_virtual_env
+from isvirtual import check_dir, is_virtual_env
 
 
 app = typer.Typer(add_completion=False)
