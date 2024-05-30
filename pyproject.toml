@@ -46,3 +46,7 @@ packages = ["./src"]
 [tool.hatch.version]
 path = "src/VERSION.md"
 pattern = "(?P<version>.*)"
+
+[tool.ruff.lint.isort]
+lines-after-imports = 2
+known-first-party = ["isvirtual"]
