@@ -128,14 +128,24 @@ def _read_config(path: str) -> None:
             conf.read_string("[root]\n" + stream.read())
         config = conf
 
+def _read_config_static(path: str) -> dict:
+    config = {}
+    conf = configparser.ConfigParser()
+    with open(path) as stream:
+        # Add fake section name to make pyvenv.cfg compatible with ConfigParser
+        conf.read_string("[root]\n" + stream.read())
+    config = dict(conf["root"])
+    return config
 
-def check_dir(path: str | Path):
+
+def check_dir(path: str | Path) -> dict:
     if isinstance(path, str) is True:
         path = Path(path)
 
     if path == Path("."):
         path = Path(os.getcwd())
 
+    config = {}
     # Check classic virtual env in a given directory
     for file in path.iterdir():
         if file.is_dir() is True:
@@ -146,10 +156,12 @@ def check_dir(path: str | Path):
                 and (file / "lib").exists() is True
                 and (file / "pyvenv.cfg").exists() is True
             ):
-                # config = _read_config(str(file / "pyvenv.cfg"))
-                # return config
-                print(f"Found venv/virtualenv: {file}")
-                return True
+                config = _read_config_static(str(file / "pyvenv.cfg"))
+                config["path"] = str(file)
+                if "virtualenv" in config:
+                    config["source"] = "virtualenv"
+                else:
+                    config["source"] = "venv"
 
     # Check for poetry
     poetry_hash = generate_env_name(path.name, str(path))
@@ -157,12 +169,14 @@ def check_dir(path: str | Path):
     poetry_root = Path(user_cache_path("pypoetry", appauthor=False))
 
     poetry_venvs = poetry_root / "virtualenvs"
+    poetry_envs = list(Path(poetry_venvs).glob(f"{poetry_hash}-*"))
     if (
         poetry_venvs.exists() is True
-        and len(list(Path(poetry_venvs).glob(f"{poetry_hash}-*"))) > 0
+        and len(poetry_envs) > 0
     ):
-        print(f"Found Poetry env: {poetry_venvs}")
-        return True
+        config = _read_config_static(str(poetry_envs[0] / "pyvenv.cfg"))
+        config["path"] = str(poetry_envs[0])
+        config["source"] = "poetry"
 
     # Check for pipenv
     pipenv_hash = generate_env_name(path.name, str(path / "Pipfile"))
@@ -171,10 +185,11 @@ def check_dir(path: str | Path):
     if pipenv_root.exists() is True and (pipenv_files := Path(pipenv_root).glob("*")):
         for pipenv_file in pipenv_files:
             if pipenv_file.name == pipenv_hash:
-                print(f"Found Pipenv env: {pipenv_file}")
-                return True
+                config = _read_config_static(str(pipenv_file / "pyvenv.cfg"))
+                config["path"] = str(pipenv_file)
+                config["source"] = "pipenv"
 
-    return False
+    return config
 
 
 def _encode(string: str, encodings: list[str] | None = None) -> bytes:

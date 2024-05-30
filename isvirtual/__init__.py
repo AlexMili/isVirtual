@@ -1,6 +1,6 @@
 import os.path as osp
 
-from isvirtual.main import *
+from isvirtual.main import *  # noqa
 
 version_path = osp.join(osp.dirname(__file__), "VERSION.md")
 
