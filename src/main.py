@@ -201,10 +201,3 @@ def generate_env_name(name: str, cwd: str) -> str:
     h_bytes = hashlib.sha256(_encode(normalized_cwd)).digest()
     h_str = base64.urlsafe_b64encode(h_bytes).decode()[:8]
     return f"{sanitized_name}-{h_str}"
-
-
-def is_virtual_cli() -> None:
-    if is_virtual():
-        print("Yes")
-    else:
-        print("No")
