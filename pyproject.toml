@@ -26,7 +26,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-keywords = ["virtual", "env", "venv", "virtualenv", "environment", "poetry", "pipenv", "pdm"]
+keywords = ["virtual", "env", "venv", "virtualenv", "environment", "poetry", "pipenv", "pdm", "hatch"]
 dependencies = ["platformdirs", "typer", "sty"]
 
 [project.urls]

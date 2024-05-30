@@ -83,11 +83,49 @@ if __name__ == "__main__":
         print("404 Not Found")
 ```
 
+You can recursively scan a directory to get all virtual environments in it:
+```python
+from isvirtual import scan_dir
+
+if __name__ == "__main__":
+    scanned = scan_dir("/some/dir/path")
+    if len(scanned) > 0:
+        print(f"Found {len(scanned)} virtual env(s)")
+    else:
+        print("No virtual env found")
+```
+
 ## CLI
 ```console
-$ isvirtual
+$ isvirtual --help
+Usage: isvirtual [OPTIONS] COMMAND [ARGS]...
+
+╭─ Options ──────────────────────────────────────────────────────────────────────────────╮
+│ --help          Show this message and exit.                                            │
+╰────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Commands ─────────────────────────────────────────────────────────────────────────────╮
+│ check   Check if you are currently in a virtual env                                    │
+│ info    If the given directory is linked to a virtual env, show its info               │
+│ scan    Scan the given directory recursively to find all virtual environment in it     │
+╰────────────────────────────────────────────────────────────────────────────────────────╯
+```
+
+Check if a virtual env is currently activated (support conda):
+```console
+$ isvirtual check
 Yes
 ```
+
+Show info of current directory's virtual env info:
+```console
+$ isviritual info .
+home=/usr/local/opt/python@3.10/bin
+include-system-site-packages=false
+version=3.10.14
+path=/Users/MyUserName/MyDir/.venv
+source=venv
+```
+Also display with the `source` key if the virtual env has been created through `venv`, `virtualenv`, `poetry` and `pipenv`.
 
 # License
 

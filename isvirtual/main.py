@@ -8,6 +8,7 @@ import re
 import sys
 from contextlib import suppress
 from pathlib import Path
+import subprocess
 
 from platformdirs import user_cache_path
 
@@ -190,6 +191,25 @@ def check_dir(path: str | Path) -> dict:
                 config["source"] = "pipenv"
 
     return config
+
+
+def scan_dir(path: str) -> list[str]:
+    output = subprocess.check_output(
+        f"find {path} -name activate -type f 2>/dev/null", shell=True
+    )
+    envs = output.decode("utf-8")
+    validated_envs = []
+    for line in envs.split("\n"):
+        if len(line) > 0:
+            cpath = Path(line)
+            if (
+                (cpath.parent.parent / "bin").exists() is True
+                and (cpath.parent.parent / "include").exists() is True
+                and (cpath.parent.parent / "lib").exists() is True
+                and (cpath.parent.parent / "pyvenv.cfg").exists() is True
+            ):
+                validated_envs.append(cpath.parent.parent)
+    return validated_envs
 
 
 def _encode(string: str, encodings: list[str] | None = None) -> bytes:
