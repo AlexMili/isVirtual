@@ -150,10 +150,10 @@ def check_dir(path: str | Path) -> dict:
     # Check classic virtual env in a given directory
     for file in path.iterdir():
         if file.is_dir() is True:
+            # include/ dir is not checked because PDM is not creating it by default
             if (
                 (file / "bin").exists() is True
                 and (file / "bin" / "activate").exists() is True
-                and (file / "include").exists() is True
                 and (file / "lib").exists() is True
                 and (file / "pyvenv.cfg").exists() is True
             ):
@@ -202,9 +202,9 @@ def scan_dir(path: str) -> list[str]:
     for line in envs.split("\n"):
         if len(line) > 0:
             cpath = Path(line)
+            # include/ dir is not checked because PDM is not creating it by default
             if (
                 (cpath.parent.parent / "bin").exists() is True
-                and (cpath.parent.parent / "include").exists() is True
                 and (cpath.parent.parent / "lib").exists() is True
                 and (cpath.parent.parent / "pyvenv.cfg").exists() is True
             ):
