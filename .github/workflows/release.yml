@@ -29,7 +29,7 @@ jobs:
 
       - name: Read VERSION file
         id: getversion
-        run: echo "version=$(cat src/VERSION.md)" >> $GITHUB_OUTPUT
+        run: echo "version=$(cat isvirtual/VERSION.md)" >> $GITHUB_OUTPUT
 
       - name: Changelog
         run: git log $(git describe --tags --abbrev=0)..HEAD --format="%s %h" > LATEST-CHANGES.md
