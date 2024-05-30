@@ -97,6 +97,17 @@ def is_conda() -> bool:
     return is_conda
 
 
+def running_from_activated_env() -> bool:
+    running = False
+    try:
+        os.environ["VIRTUAL_ENV"]
+        running = True
+    except Exception:
+        pass
+
+    return running
+
+
 def _get_prefix() -> str:
     return sys.real_prefix if hasattr(sys, "real_prefix") else sys.prefix
 

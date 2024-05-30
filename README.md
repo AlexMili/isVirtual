@@ -62,6 +62,17 @@ prompt = nameOfYourProject
 
 Note that virtual environment created with `virtualenv` have more keys and the key `prompt` is not present by default in `venv` created environments.
 
+You can also check if the terminal from which the script has been launched is in a virtual env:
+```python
+if running_from_activated_env() is True:
+    print("The script is running from a terminal with an activated virtual env")
+```
+
+Note that this function check the existence of `VIRTUAL_ENV`. It is set by the activate script, but a virtual env can be used without activation by directly running an executable from the virtual env's bin/ (or Scripts on Windows) directory, in which case `VIRTUAL_ENV` will not be set. Or a non-virtual env Python binary can be executed directly while a virtual env is activated in the shell, in which case `VIRTUAL_ENV` may be set in a Python process that is not actually running in that virtual env.
+
+[Source](https://stackoverflow.com/a/1883251)
+
+
 ## CLI
 ```console
 $ isvirtual
