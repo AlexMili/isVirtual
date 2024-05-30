@@ -72,6 +72,16 @@ Note that this function check the existence of `VIRTUAL_ENV`. It is set by the a
 
 [Source](https://stackoverflow.com/a/1883251)
 
+You can find if a given directory is attached to a virtual env:
+```python
+from isvirtual import check_dir
+
+if __name__ == "__main__":
+    if check_dir("/some/dir/path") is True:
+        print("Virtual environment found")
+    else:
+        print("404 Not Found")
+```
 
 ## CLI
 ```console

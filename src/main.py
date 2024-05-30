@@ -1,8 +1,15 @@
+import base64
 import configparser
 import glob
+import hashlib
 import json
 import os
+import re
 import sys
+from contextlib import suppress
+from pathlib import Path
+
+from platformdirs import user_cache_path
 
 config = None
 
@@ -120,6 +127,80 @@ def _read_config(path: str) -> None:
             # Add fake section name to make pyvenv.cfg compatible with ConfigParser
             conf.read_string("[root]\n" + stream.read())
         config = conf
+
+
+def check_dir(path: str | Path):
+    if isinstance(path, str) is True:
+        path = Path(path)
+
+    if path == Path("."):
+        path = Path(os.getcwd())
+
+    # Check classic virtual env in a given directory
+    for file in path.iterdir():
+        if file.is_dir() is True:
+            if (
+                (file / "bin").exists() is True
+                and (file / "bin" / "activate").exists() is True
+                and (file / "include").exists() is True
+                and (file / "lib").exists() is True
+                and (file / "pyvenv.cfg").exists() is True
+            ):
+                # config = _read_config(str(file / "pyvenv.cfg"))
+                # return config
+                print(f"Found venv/virtualenv: {file}")
+                return True
+
+    # Check for poetry
+    poetry_hash = generate_env_name(path.name, str(path))
+    # From https://github.com/python-poetry/poetry/blob/108d7323280889b277751807fb7d564674fe6896/src/poetry/locations.py
+    poetry_root = Path(user_cache_path("pypoetry", appauthor=False))
+
+    poetry_venvs = poetry_root / "virtualenvs"
+    if (
+        poetry_venvs.exists() is True
+        and len(list(Path(poetry_venvs).glob(f"{poetry_hash}-*"))) > 0
+    ):
+        print(f"Found Poetry env: {poetry_venvs}")
+        return True
+
+    # Check for pipenv
+    pipenv_hash = generate_env_name(path.name, str(path / "Pipfile"))
+    pipenv_root = Path("~/.local/share").expanduser() / "virtualenvs"
+
+    if pipenv_root.exists() is True and (pipenv_files := Path(pipenv_root).glob("*")):
+        for pipenv_file in pipenv_files:
+            if pipenv_file.name == pipenv_hash:
+                print(f"Found Pipenv env: {pipenv_file}")
+                return True
+
+    return False
+
+
+def _encode(string: str, encodings: list[str] | None = None) -> bytes:
+    if isinstance(string, bytes):
+        return string
+    encodings = encodings or ["utf-8", "latin1", "ascii"]
+    for encoding in encodings:
+        with suppress(UnicodeEncodeError, UnicodeDecodeError):
+            return string.encode(encoding)
+    return string.encode(encodings[0], errors="ignore")
+
+
+# Poetry and Pipenv have different functions but they work exactly the same.
+# The only difference is that pipenv is hashing the path to the Pipfile file
+# while Poetry is hashing only the directory path. Here is the Poetry's implementation
+# but it is used for both Poetry and Pipenv.
+# From https://github.com/python-poetry/poetry/blob/108d7323280889b277751807fb7d564674fe6896/src/poetry/utils/env/env_manager.py#L751-L759
+# For Pipenv implementation please look here:
+# https://github.com/pypa/pipenv/blob/951c382cfd066c6cf014e5c18049bd9259456c24/pipenv/project.py#L536
+def generate_env_name(name: str, cwd: str) -> str:
+    name = name.lower()
+    sanitized_name = re.sub(r'[ $`!*@"\\\r\n\t]', "_", name)[:42]
+    normalized_cwd = os.path.normcase(os.path.realpath(cwd))
+    h_bytes = hashlib.sha256(_encode(normalized_cwd)).digest()
+    h_str = base64.urlsafe_b64encode(h_bytes).decode()[:8]
+    return f"{sanitized_name}-{h_str}"
 
 
 def is_virtual_cli() -> None:
