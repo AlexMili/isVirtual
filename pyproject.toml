@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "isvirtual"
-description = "Detect if your script is running inside a virtual environment"
+description = "Tool to detect if the current directory is linked to a virtual environment, get the config of this env and more. Work with venv, virtualenv, pipenv, poetry and soon hatch and pdm."
 dynamic = ["version"]
 readme = "README.md"
 authors = [{ name = "Alex Mili" }]

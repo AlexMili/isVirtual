@@ -1,10 +1,4 @@
-**isVirtual** is a very simple tool to detect if the current script is within a virtual environment.
-
-# Disclaimer
-
-The goal of this project was to play around with the process to publish to [Pypi](https://pypi.org). The code of this module is coming from this [stackoverflow thread](https://stackoverflow.com/questions/1871549/how-to-determine-if-python-is-running-inside-a-virtualenv).
-
-If you find use cases in which it doesn't work please open an [issue](https://github.com/AlexMili/isVirtual/issues). I intend to maintain this small package even if it can be seen as *"useless"*.
+**isVirtual** is a tool to detect if the current directory is linked to a virtual environment, get the config of this env and more. Work with venv, virtualenv, pipenv, poetry and soon hatch and pdm.
 
 # Install
 
