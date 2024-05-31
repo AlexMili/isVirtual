@@ -1,4 +1,4 @@
-**isVirtual** is a tool to detect if the current directory is linked to a virtual environment, get the config of this env and more. Work with venv, virtualenv, pipenv, poetry and soon hatch and pdm.
+**isVirtual** is a tool to detect if the current directory is linked to a virtual environment, get the config of this env and more. Work with venv, virtualenv, pipenv, poetry, hatch, pdm and uv.
 
 # Install
 

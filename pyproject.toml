@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "isvirtual"
-description = "Tool to detect if the current directory is linked to a virtual environment, get the config of this env and more. Work with venv, virtualenv, pipenv, poetry and soon hatch and pdm."
+description = "Tool to detect if the current directory is linked to a virtual environment, get the config of this env and more. Work with venv, virtualenv, pipenv, poetry, hatch, pdm and uv."
 dynamic = ["version"]
 readme = "README.md"
 authors = [{ name = "Alex Mili" }]
@@ -26,7 +26,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
-keywords = ["virtual", "env", "venv", "virtualenv", "environment", "poetry", "pipenv", "pdm", "hatch"]
+keywords = ["virtual", "env", "venv", "virtualenv", "environment", "poetry", "pipenv", "pdm", "hatch", "uv"]
 dependencies = ["platformdirs", "typer", "sty"]
 
 [project.urls]

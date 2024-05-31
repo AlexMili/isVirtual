@@ -5,12 +5,13 @@ import hashlib
 import json
 import os
 import re
+import subprocess
 import sys
 from contextlib import suppress
 from pathlib import Path
-import subprocess
 
 from platformdirs import user_cache_path
+
 
 config = None
 
@@ -88,6 +89,18 @@ def is_virtualenv() -> bool:
     else:
         return False
 
+def is_uv() -> bool:
+    if is_virtual_env() is False:
+        return False
+
+    prefix = _get_prefix()
+    _read_config(os.path.join(prefix, "pyvenv.cfg"))
+
+    if "uv" in config["root"]:
+        return True
+    else:
+        return False
+
 
 def is_conda() -> bool:
     is_conda = False
@@ -129,6 +142,7 @@ def _read_config(path: str) -> None:
             conf.read_string("[root]\n" + stream.read())
         config = conf
 
+
 def _read_config_static(path: str) -> dict:
     config = {}
     conf = configparser.ConfigParser()
@@ -150,7 +164,7 @@ def check_dir(path: str | Path) -> dict:
     # Check classic virtual env in a given directory
     for file in path.iterdir():
         if file.is_dir() is True:
-            # include/ dir is not checked because PDM is not creating it by default
+            # include/ dir is not checked because PDM, Hatch and uv are not creating it by default
             if (
                 (file / "bin").exists() is True
                 and (file / "bin" / "activate").exists() is True
@@ -159,8 +173,10 @@ def check_dir(path: str | Path) -> dict:
             ):
                 config = _read_config_static(str(file / "pyvenv.cfg"))
                 config["path"] = str(file)
-                if "virtualenv" in config:
+                if "virtualenv" in config.keys():
                     config["source"] = "virtualenv"
+                elif "uv" in config.keys():
+                    config["source"] = "uv"
                 else:
                     config["source"] = "venv"
 
@@ -171,10 +187,7 @@ def check_dir(path: str | Path) -> dict:
 
     poetry_venvs = poetry_root / "virtualenvs"
     poetry_envs = list(Path(poetry_venvs).glob(f"{poetry_hash}-*"))
-    if (
-        poetry_venvs.exists() is True
-        and len(poetry_envs) > 0
-    ):
+    if poetry_venvs.exists() is True and len(poetry_envs) > 0:
         config = _read_config_static(str(poetry_envs[0] / "pyvenv.cfg"))
         config["path"] = str(poetry_envs[0])
         config["source"] = "poetry"
@@ -202,7 +215,7 @@ def scan_dir(path: str) -> list[str]:
     for line in envs.split("\n"):
         if len(line) > 0:
             cpath = Path(line)
-            # include/ dir is not checked because PDM is not creating it by default
+            # include/ dir is not checked because PDM, Hatch and uv are not creating it by default
             if (
                 (cpath.parent.parent / "bin").exists() is True
                 and (cpath.parent.parent / "lib").exists() is True
